@@ -93,7 +93,7 @@ describe("extension handlers", () => {
 		// session_start defers to setImmediate so pi's init-based
 		// updateTerminalTitle() fires first; wait for the deferred call.
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✅ π - pi-idle");
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -154,7 +154,7 @@ describe("extension handlers", () => {
 		const handler = mockPi._handlers.get("agent_end")!;
 		await handler({ messages: [] }, ctx);
 
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✅ π - pi-idle");
 	});
 
 	it("session_shutdown sets plain base title", async () => {
@@ -181,7 +181,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✅ π - pi-idle");
 	});
 
 	it(">50% and <90%: shows [N%] in title", async () => {
@@ -195,7 +195,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m [64%] π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✅ [64%] π - pi-idle");
 	});
 
 	it("≥90%: shows ![N%]! in title", async () => {
@@ -209,7 +209,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m ![95%]! π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✅ ![95%]! π - pi-idle");
 	});
 
 	it("context null: no indicator in title", async () => {
@@ -223,7 +223,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✅ π - pi-idle");
 	});
 
 	it("spinner never includes context indicator, even at ≥90%", async () => {
