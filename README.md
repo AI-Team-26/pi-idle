@@ -20,7 +20,7 @@ A [pi](https://github.com/earendil-works/pi-coding-agent) extension that puts a 
 
 | Working | Idle |
 |---|---|
-| ![spinner](assets/spinner.svg) | ![idle](assets/idle.png) |
+| ![spinner](assets/spinner.png) | ![idle](assets/idle.png) |
 
 ## Install
 
@@ -33,7 +33,7 @@ pi install npm:pi-status
 From GitHub:
 
 ```sh
-pi install git:github.com/ZoRDoK/pi-idle
+pi install git:github.com/AI-Team-26/pi-status
 ```
 
 ## Test
