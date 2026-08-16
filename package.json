@@ -14,7 +14,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/ZoRDoK/pi-idle.git"
+		"url": "git+https://github.com/AI-Team-26/pi-status"
 	},
 	"scripts": {
 		"test": "vitest run",

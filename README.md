@@ -43,7 +43,7 @@ npm test        # single run
 npm run test:watch  # watch mode
 ```
 
-CI runs on every push / PR to `master` via GitHub Actions.
+CI runs on every push / PR to `main` via GitHub Actions.
 
 ## License
 
