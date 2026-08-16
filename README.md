@@ -24,14 +24,6 @@ A [pi](https://github.com/earendil-works/pi-coding-agent) extension that puts a 
 
 ## Install
 
-From npm:
-
-```sh
-pi install npm:pi-status
-```
-
-From GitHub:
-
 ```sh
 pi install git:github.com/AI-Team-26/pi-idle
 ```
