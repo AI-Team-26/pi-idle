@@ -32,8 +32,11 @@ const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", 
 function getBaseTitle(pi: ExtensionAPI): string {
 	const cwd = path.basename(process.cwd());
 	const session = pi.getSessionName();
+	const agentName = process.env.PI_AGENT_NAME ?? "";
 
-	return session ? `π - ${session} - ${cwd}` : `π - ${cwd}`;
+	const base = session ? `π - ${session} - ${cwd}` : `π - ${cwd}`;
+
+	return agentName ? `${base} - ${agentName}` : base;
 }
 
 // ── Context helpers ─────────────────────────────────────
