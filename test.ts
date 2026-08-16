@@ -93,7 +93,7 @@ describe("extension handlers", () => {
 		// session_start defers to setImmediate so pi's init-based
 		// updateTerminalTitle() fires first; wait for the deferred call.
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m 🟢 Pi Agent Dev-2 - pi-idle");
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -107,7 +107,7 @@ describe("extension handlers", () => {
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
 		// Just spinner + base title, no indicator (25% ≤ 50%)
-		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle - .+$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] 🟢 Pi Agent Dev-2 - pi-idle$/);
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -120,7 +120,7 @@ describe("extension handlers", () => {
 
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle - .+$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] 🟢 Pi Agent Dev-2 - pi-idle$/);
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -133,7 +133,7 @@ describe("extension handlers", () => {
 
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle - .+$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] 🟢 Pi Agent Dev-2 - pi-idle$/);
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -146,7 +146,7 @@ describe("extension handlers", () => {
 
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle - .+$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] 🟢 Pi Agent Dev-2 - pi-idle$/);
 	});
 
 	it("agent_end restores green checkmark in title", async () => {
@@ -154,7 +154,7 @@ describe("extension handlers", () => {
 		const handler = mockPi._handlers.get("agent_end")!;
 		await handler({ messages: [] }, ctx);
 
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m 🟢 Pi Agent Dev-2 - pi-idle");
 	});
 
 	it("session_shutdown sets plain base title", async () => {
@@ -162,7 +162,7 @@ describe("extension handlers", () => {
 		const handler = mockPi._handlers.get("session_shutdown")!;
 		await handler({ reason: "quit" }, ctx);
 
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("🟢 Pi Agent Dev-2 - pi-idle");
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 });
@@ -181,7 +181,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m 🟢 Pi Agent Dev-2 - pi-idle");
 	});
 
 	it(">50% and <90%: shows [N%] in title", async () => {
@@ -195,7 +195,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m [64%] π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m [64%] 🟢 Pi Agent Dev-2 - pi-idle");
 	});
 
 	it("≥90%: shows ![N%]! in title", async () => {
@@ -209,7 +209,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m ![95%]! π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m ![95%]! 🟢 Pi Agent Dev-2 - pi-idle");
 	});
 
 	it("context null: no indicator in title", async () => {
@@ -223,7 +223,7 @@ describe("context indicator", () => {
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle - 🟢 Pi Agent Dev-2");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m 🟢 Pi Agent Dev-2 - pi-idle");
 	});
 
 	it("spinner never includes context indicator, even at ≥90%", async () => {
@@ -240,7 +240,7 @@ describe("context indicator", () => {
 
 		const titleCalls = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls;
 		const allPlain = titleCalls.every((c: unknown[]) =>
-			/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle - .+$/.test(c[0] as string),
+			/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] 🟢 Pi Agent Dev-2 - pi-idle$/.test(c[0] as string),
 		);
 		expect(allPlain).toBe(true);
 	});

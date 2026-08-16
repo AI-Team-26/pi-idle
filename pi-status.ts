@@ -34,9 +34,9 @@ function getBaseTitle(pi: ExtensionAPI): string {
 	const session = pi.getSessionName();
 	const agentName = process.env.PI_AGENT_NAME ?? "";
 
-	const base = session ? `π - ${session} - ${cwd}` : `π - ${cwd}`;
+	const prefix = agentName || "π";
 
-	return agentName ? `${base} - ${agentName}` : base;
+	return session ? `${prefix} - ${session} - ${cwd}` : `${prefix} - ${cwd}`;
 }
 
 // ── Context helpers ─────────────────────────────────────
