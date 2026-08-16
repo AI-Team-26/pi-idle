@@ -33,7 +33,7 @@ pi install npm:pi-status
 From GitHub:
 
 ```sh
-pi install git:github.com/ZoRDoK/pi-idle
+pi install git:github.com/AI-Team-26/pi-idle
 ```
 
 ## Test
