@@ -1,9 +1,9 @@
 /**
- * Pi Idle Extension
+ * Pi Status Extension
  *
  * Shows a green checkmark (✓) in the **terminal title** when pi is idle
  * (session finished, waiting for user input). When the user submits
- * a prompt, the checkmark becomes a "square clock" spinner (◰◳◲◱).
+ * a prompt, the checkmark becomes a braille-dot spinner (⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏).
  *
  * Context-usage percentage appears beside the checkmark (idle state) in the title:
  *   ≤ 50%  → not shown
@@ -15,19 +15,19 @@
  * so no colour is attempted there.
  *
  * Usage:
- *   pi -e ./pi-idle.ts
- *   # Or place in ~/.pi/agent/extensions/pi-idle.ts for auto-discovery
+ *   pi -e ./pi-status.ts
+ *   # Or place in ~/.pi/agent/extensions/pi-status.ts for auto-discovery
  */
 
 import path from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-// ── Spinner frames ──────────────────────────────────────────────
+// ── Spinner frames ──────────────────────────────────────
 
-/** "Square clock" — each frame fills a different quadrant of a square. */
-const SPINNER_FRAMES = ["◰", "◳", "◲", "◱"];
+/** Braille dots — each frame fills a different quadrant of a circle. */
+const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
-// ── Base title (mirrors pi's default format) ────────────────────
+// ── Base title (mirrors pi's default format) ────────────
 
 function getBaseTitle(pi: ExtensionAPI): string {
 	const cwd = path.basename(process.cwd());
@@ -36,7 +36,7 @@ function getBaseTitle(pi: ExtensionAPI): string {
 	return session ? `π - ${session} - ${cwd}` : `π - ${cwd}`;
 }
 
-// ── Context helpers ─────────────────────────────────────────────
+// ── Context helpers ─────────────────────────────────────
 
 /**
  * Build a context indicator for the title.
@@ -57,7 +57,7 @@ function getContextIndicator(ctx: ExtensionContext): string {
 	return ` ${percent >= 90 ? `!${formatted}!` : formatted}`;
 }
 
-// ── Extension entry point ───────────────────────────────────────
+// ── Extension entry point ─────────────────────────────────
 
 export default function (pi: ExtensionAPI) {
 	let timer: ReturnType<typeof setInterval> | null = null;
@@ -73,12 +73,13 @@ export default function (pi: ExtensionAPI) {
 		frameIndex = 0;
 	}
 
-	/** Restore idle title with checkmark and context indicator. */
+	/** Restore idle title with green checkmark and context indicator. */
 	function restoreTitle(ctx: ExtensionContext) {
 		const baseTitle = getBaseTitle(pi);
 		const indicator = getContextIndicator(ctx);
+		const checkmark = ctx.ui.theme.fg("green", "✓");
 
-		ctx.ui.setTitle(`✓${indicator} ${baseTitle}`);
+		ctx.ui.setTitle(`${checkmark}${indicator} ${baseTitle}`);
 	}
 
 	function showSpinnerFrame(ctx: ExtensionContext) {

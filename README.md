@@ -1,6 +1,6 @@
-# pi-idle
+# pi-status
 
-A [pi](https://github.com/earendil-works/pi-coding-agent) extension that puts a **✓ checkmark** in your terminal title when the agent is idle, and a **◰◳◲◱ spinner** while it's working — so you can tell at a glance whether pi is done or still thinking.
+A [pi](https://github.com/earendil-works/pi-coding-agent) extension that puts a **green ✓ checkmark** in your terminal title when the agent is idle, and a **⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏ braille-dot spinner** while it's working — so you can tell at a glance whether pi is done or still thinking.
 
 ## Title format
 
@@ -9,7 +9,7 @@ A [pi](https://github.com/earendil-works/pi-coding-agent) extension that puts a 
 | Idle (≤ 50 % context) | `✓ π - session - project` |
 | Idle (> 50 % context) | `✓ [63%] π - session - project` |
 | Idle (≥ 90 % context) | `✓ ![95%]! π - session - project` |
-| Working | `◰ π - session - project` |
+| Working | `⠋ π - session - project` |
 | Shutdown | `π - session - project` |
 
 - The context-usage percentage is shown **only** beside the checkmark — never during the spinner. It's captured once when the agent finishes, not updated live.
@@ -27,7 +27,7 @@ A [pi](https://github.com/earendil-works/pi-coding-agent) extension that puts a 
 From npm:
 
 ```sh
-pi install npm:pi-idle
+pi install npm:pi-status
 ```
 
 From GitHub:

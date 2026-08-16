@@ -1,10 +1,10 @@
 /**
- * Integration tests for pi-idle.ts extension.
+ * Integration tests for pi-status.ts extension.
  *
  * Tests:
  * 1.  Module loads and exports a default function
  * 2.  All 6 lifecycle handlers are registered
- * 3.  `session_start` → plain checkmark in title (deferred via setImmediate)
+ * 3.  `session_start` → green checkmark in title (deferred via setImmediate)
  * 4.  `input` → spinner starts in title
  * 5.  `input` from any source starts spinner
  * 6.  `agent_start` → spinner starts in title
@@ -20,7 +20,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
-// ── Helpers ──────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────
 
 function createMockPi(): ExtensionAPI & { _handlers: Map<string, Function> } {
 	const handlers = new Map<string, Function>();
@@ -49,17 +49,17 @@ function createMockCtx(overrides?: Partial<ExtensionContext>): ExtensionContext 
 	} as ExtensionContext;
 }
 
-// ── Module-level tests ───────────────────────────────────────────
+// ── Module-level tests ───────────────────────────────────
 
-describe("pi-idle.ts module", () => {
+describe("pi-status.ts module", () => {
 	it("loads without errors", async () => {
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		expect(typeof mod.default).toBe("function");
 	});
 
 	it("registers all six lifecycle handlers", async () => {
 		const mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 		expect(mockPi.on).toHaveBeenCalled();
 		const events = new Set(
@@ -74,14 +74,14 @@ describe("pi-idle.ts module", () => {
 	});
 });
 
-// ── Handler behaviour ────────────────────────────────────────────
+// ── Handler behaviour ────────────────────────────────────
 
 describe("extension handlers", () => {
 	let mockPi: ReturnType<typeof createMockPi>;
 
 	beforeEach(async () => {
 		mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 	});
 
@@ -93,7 +93,7 @@ describe("extension handlers", () => {
 		// session_start defers to setImmediate so pi's init-based
 		// updateTerminalTitle() fires first; wait for the deferred call.
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✓ π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -107,7 +107,7 @@ describe("extension handlers", () => {
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
 		// Just spinner + base title, no indicator (25% ≤ 50%)
-		expect(firstCall).toMatch(/^[◰◳◲◱] π - pi-idle$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle$/);
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -120,7 +120,7 @@ describe("extension handlers", () => {
 
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-		expect(firstCall).toMatch(/^[◰◳◲◱] π - pi-idle$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle$/);
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -133,7 +133,7 @@ describe("extension handlers", () => {
 
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-		expect(firstCall).toMatch(/^[◰◳◲◱] π - pi-idle$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle$/);
 		expect(ctx.ui.setStatus).not.toHaveBeenCalled();
 	});
 
@@ -146,15 +146,15 @@ describe("extension handlers", () => {
 
 		expect(ctx.ui.setTitle).toHaveBeenCalled();
 		const firstCall = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls[0][0] as string;
-		expect(firstCall).toMatch(/^[◰◳◲◱] π - pi-idle$/);
+		expect(firstCall).toMatch(/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle$/);
 	});
 
-	it("agent_end restores checkmark in title", async () => {
+	it("agent_end restores green checkmark in title", async () => {
 		const ctx = createMockCtx(); // 25% ≤ 50%
 		const handler = mockPi._handlers.get("agent_end")!;
 		await handler({ messages: [] }, ctx);
 
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✓ π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
 	});
 
 	it("session_shutdown sets plain base title", async () => {
@@ -167,7 +167,7 @@ describe("extension handlers", () => {
 	});
 });
 
-// ── Context indicator ────────────────────────────────────────────
+// ── Context indicator ────────────────────────────────────
 
 describe("context indicator", () => {
 	it("≤50%: no indicator in title", async () => {
@@ -175,13 +175,13 @@ describe("context indicator", () => {
 			getContextUsage: () => ({ percent: 50, tokens: 50000, contextWindow: 100000 }),
 		});
 		const mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✓ π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
 	});
 
 	it(">50% and <90%: shows [N%] in title", async () => {
@@ -189,13 +189,13 @@ describe("context indicator", () => {
 			getContextUsage: () => ({ percent: 63.7, tokens: 63700, contextWindow: 100000 }),
 		});
 		const mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✓ [64%] π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m [64%] π - pi-idle");
 	});
 
 	it("≥90%: shows ![N%]! in title", async () => {
@@ -203,13 +203,13 @@ describe("context indicator", () => {
 			getContextUsage: () => ({ percent: 95, tokens: 95000, contextWindow: 100000 }),
 		});
 		const mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✓ ![95%]! π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m ![95%]! π - pi-idle");
 	});
 
 	it("context null: no indicator in title", async () => {
@@ -217,13 +217,13 @@ describe("context indicator", () => {
 			getContextUsage: () => null,
 		});
 		const mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 
 		const handler = mockPi._handlers.get("session_start")!;
 		handler({ reason: "startup" }, ctx);
 		await new Promise(resolve => setImmediate(resolve));
-		expect(ctx.ui.setTitle).toHaveBeenCalledWith("✓ π - pi-idle");
+		expect(ctx.ui.setTitle).toHaveBeenCalledWith("\x1b[32m✓\x1b[0m π - pi-idle");
 	});
 
 	it("spinner never includes context indicator, even at ≥90%", async () => {
@@ -231,7 +231,7 @@ describe("context indicator", () => {
 			getContextUsage: () => ({ percent: 91, tokens: 91000, contextWindow: 100000 }),
 		});
 		const mockPi = createMockPi();
-		const mod = await import("./pi-idle.ts");
+		const mod = await import("./pi-status.ts");
 		mod.default(mockPi as unknown as ExtensionAPI);
 
 		const handler = mockPi._handlers.get("input")!;
@@ -240,7 +240,7 @@ describe("context indicator", () => {
 
 		const titleCalls = (ctx.ui.setTitle as ReturnType<typeof vi.fn>).mock.calls;
 		const allPlain = titleCalls.every((c: unknown[]) =>
-			/^[◰◳◲◱] π - pi-idle$/.test(c[0] as string),
+			/^[\u280B\u2819\u2839\u2838\u283C\u2834\u2826\u2827\u2807\u280F] π - pi-idle$/.test(c[0] as string),
 		);
 		expect(allPlain).toBe(true);
 	});
